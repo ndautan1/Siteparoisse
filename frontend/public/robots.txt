@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://paroisse-staging.preview.emergentagent.com/sitemap.xml
+Sitemap: https://faith-community-115.preview.emergentagent.com/sitemap.xml
 
 Disallow: /admin/
 Disallow: /admin/login
