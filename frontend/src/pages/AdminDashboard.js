@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit2, Trash2, LogOut, Newspaper, Clock, Calendar, Mail, Upload, Copy, X, FileText, Repeat } from 'lucide-react';
+import { Plus, Edit2, Trash2, LogOut, Newspaper, Clock, Calendar, Mail, Upload, Copy, X, FileText, Repeat, LayoutDashboard, Users, Download, Eye, MessageSquare } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { format, addWeeks, addMonths, addDays } from 'date-fns';
@@ -14,12 +14,15 @@ import { APP_VERSION } from '@/version';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('news');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [news, setNews] = useState([]);
   const [massTimes, setMassTimes] = useState([]);
   const [funerals, setFunerals] = useState([]);
   const [events, setEvents] = useState([]);
   const [letters, setLetters] = useState([]);
+  const [subscribers, setSubscribers] = useState([]);
+  const [contactMessages, setContactMessages] = useState([]);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -57,6 +60,7 @@ const AdminDashboard = () => {
   const [selectedFunerals, setSelectedFunerals] = useState([]);
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [selectedLetters, setSelectedLetters] = useState([]);
+  const [selectedSubscribers, setSelectedSubscribers] = useState([]);
 
   // File upload states
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -161,18 +165,24 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [newsRes, massRes, funeralsRes, eventsRes, lettersRes] = await Promise.all([
+      const [newsRes, massRes, funeralsRes, eventsRes, lettersRes, subsRes, msgRes, statsRes] = await Promise.all([
         axios.get(`${BACKEND_URL}/api/news`),
         axios.get(`${BACKEND_URL}/api/mass-times`),
         axios.get(`${BACKEND_URL}/api/funerals`),
         axios.get(`${BACKEND_URL}/api/events?include_past=true`),
         axios.get(`${BACKEND_URL}/api/letters`),
+        axios.get(`${BACKEND_URL}/api/subscribers`, { headers: getAuthHeaders() }),
+        axios.get(`${BACKEND_URL}/api/contact`, { headers: getAuthHeaders() }),
+        axios.get(`${BACKEND_URL}/api/stats`, { headers: getAuthHeaders() }),
       ]);
       setNews(newsRes.data);
       setMassTimes(massRes.data);
       setFunerals(funeralsRes.data);
       setEvents(eventsRes.data);
       setLetters(lettersRes.data);
+      setSubscribers(subsRes.data);
+      setContactMessages(msgRes.data);
+      setStats(statsRes.data);
     } catch (error) {
       toast.error('Erreur lors du chargement des données');
     } finally {
@@ -460,6 +470,51 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteSubscriber = async (id) => {
+    if (!window.confirm('Supprimer cet abonné ?')) return;
+    try {
+      await axios.delete(`${BACKEND_URL}/api/subscribers/${id}`, { headers: getAuthHeaders() });
+      toast.success('Abonné supprimé');
+      fetchData();
+    } catch (error) {
+      toast.error('Erreur lors de la suppression');
+    }
+  };
+
+  const handleMarkMessageRead = async (id) => {
+    try {
+      await axios.put(`${BACKEND_URL}/api/contact/${id}/read`, {}, { headers: getAuthHeaders() });
+      fetchData();
+    } catch (error) {
+      toast.error('Erreur');
+    }
+  };
+
+  const handleDeleteMessage = async (id) => {
+    if (!window.confirm('Supprimer ce message ?')) return;
+    try {
+      await axios.delete(`${BACKEND_URL}/api/contact/${id}`, { headers: getAuthHeaders() });
+      toast.success('Message supprimé');
+      fetchData();
+    } catch (error) {
+      toast.error('Erreur lors de la suppression');
+    }
+  };
+
+  const exportSubscribersCSV = () => {
+    if (subscribers.length === 0) return;
+    const header = 'Email,Date inscription\n';
+    const rows = subscribers.map(s => `${s.email},${s.subscribed_at}`).join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `abonnes_newsletter_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Export CSV téléchargé');
+  };
+
   const formatDate = (dateString) => {
     try {
       return format(new Date(dateString), 'dd/MM/yyyy à HH:mm', { locale: fr });
@@ -544,58 +599,90 @@ const AdminDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tabs */}
-        <div className="flex space-x-4 mb-8 border-b border-slate-200">
-          <button
-            onClick={() => setActiveTab('news')}
-            className={`pb-4 px-4 font-medium transition-colors flex items-center space-x-2 ${
-              activeTab === 'news' ? 'text-gold border-b-2 border-gold' : 'text-slate-600 hover:text-slate-900'
-            }`}
-            data-testid="tab-news"
-          >
-            <Newspaper className="w-5 h-5" />
-            <span>Actualités</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('mass')}
-            className={`pb-4 px-4 font-medium transition-colors flex items-center space-x-2 ${
-              activeTab === 'mass' ? 'text-gold border-b-2 border-gold' : 'text-slate-600 hover:text-slate-900'
-            }`}
-            data-testid="tab-mass-times"
-          >
-            <Clock className="w-5 h-5" />
-            <span>Horaires des messes</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('funerals')}
-            className={`pb-4 px-4 font-medium transition-colors flex items-center space-x-2 ${
-              activeTab === 'funerals' ? 'text-gold border-b-2 border-gold' : 'text-slate-600 hover:text-slate-900'
-            }`}
-            data-testid="tab-funerals"
-          >
-            <ChristianCross className="w-5 h-5" />
-            <span>Funérailles</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('events')}
-            className={`pb-4 px-4 font-medium transition-colors flex items-center space-x-2 ${
-              activeTab === 'events' ? 'text-gold border-b-2 border-gold' : 'text-slate-600 hover:text-slate-900'
-            }`}
-            data-testid="tab-events"
-          >
-            <Calendar className="w-5 h-5" />
-            <span>Événements</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('letters')}
-            className={`pb-4 px-4 font-medium transition-colors flex items-center space-x-2 ${
-              activeTab === 'letters' ? 'text-gold border-b-2 border-gold' : 'text-slate-600 hover:text-slate-900'
-            }`}
-            data-testid="tab-letters"
-          >
-            <Mail className="w-5 h-5" />
-            <span>Lettres</span>
-          </button>
+        <div className="flex space-x-1 mb-8 border-b border-slate-200 overflow-x-auto pb-px">
+          {[
+            { id: 'dashboard', icon: LayoutDashboard, label: 'Tableau de bord' },
+            { id: 'news', icon: Newspaper, label: 'Actualités' },
+            { id: 'mass', icon: Clock, label: 'Messes' },
+            { id: 'funerals', icon: () => <ChristianCross className="w-5 h-5" />, label: 'Funérailles' },
+            { id: 'events', icon: Calendar, label: 'Événements' },
+            { id: 'letters', icon: Mail, label: 'Lettres' },
+            { id: 'messages', icon: MessageSquare, label: 'Messages', badge: stats?.messages_unread },
+            { id: 'subscribers', icon: Users, label: 'Abonnés' },
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`pb-3 px-3 font-medium transition-colors flex items-center space-x-2 whitespace-nowrap text-sm ${
+                activeTab === tab.id ? 'text-gold border-b-2 border-gold' : 'text-slate-600 hover:text-slate-900'
+              }`}
+              data-testid={`tab-${tab.id}`}
+            >
+              <tab.icon className="w-4 h-4" />
+              <span>{tab.label}</span>
+              {tab.badge > 0 && (
+                <span className="bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">{tab.badge}</span>
+              )}
+            </button>
+          ))}
         </div>
+
+        {/* DASHBOARD TAB */}
+        {activeTab === 'dashboard' && (
+          <div className="space-y-8" data-testid="dashboard-tab-content">
+            {stats ? (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {[
+                    { label: 'Actualités', value: stats.news, icon: Newspaper, color: 'bg-blue-50 text-blue-700', onClick: () => setActiveTab('news') },
+                    { label: 'Événements à venir', value: stats.events_upcoming, icon: Calendar, color: 'bg-emerald-50 text-emerald-700', onClick: () => setActiveTab('events') },
+                    { label: 'Horaires de messes', value: stats.mass_times, icon: Clock, color: 'bg-amber-50 text-amber-700', onClick: () => setActiveTab('mass') },
+                    { label: 'Funérailles', value: stats.funerals, icon: () => <ChristianCross className="w-6 h-6" />, color: 'bg-slate-100 text-slate-700', onClick: () => setActiveTab('funerals') },
+                    { label: 'Lettres', value: stats.letters, icon: FileText, color: 'bg-purple-50 text-purple-700', onClick: () => setActiveTab('letters') },
+                    { label: 'Abonnés newsletter', value: stats.subscribers, icon: Users, color: 'bg-teal-50 text-teal-700', onClick: () => setActiveTab('subscribers') },
+                    { label: 'Messages reçus', value: stats.messages, icon: MessageSquare, color: 'bg-indigo-50 text-indigo-700', onClick: () => setActiveTab('messages') },
+                    { label: 'Messages non lus', value: stats.messages_unread, icon: Mail, color: stats.messages_unread > 0 ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700', onClick: () => setActiveTab('messages') },
+                  ].map((stat, idx) => (
+                    <button
+                      key={idx}
+                      onClick={stat.onClick}
+                      className={`${stat.color} rounded-xl p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] border border-transparent hover:border-slate-200`}
+                      data-testid={`stat-card-${idx}`}
+                    >
+                      <stat.icon className="w-6 h-6 mb-3 opacity-70" />
+                      <p className="text-3xl font-bold mb-1">{stat.value}</p>
+                      <p className="text-sm opacity-80 font-medium">{stat.label}</p>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Recent messages preview */}
+                {contactMessages.length > 0 && (
+                  <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-serif text-xl text-slate-deep">Derniers messages</h3>
+                      <button onClick={() => setActiveTab('messages')} className="text-sm text-gold hover:text-gold-dark font-medium">Voir tout</button>
+                    </div>
+                    <div className="space-y-3">
+                      {contactMessages.slice(0, 3).map(msg => (
+                        <div key={msg.id} className={`p-3 rounded-lg border ${msg.read ? 'border-slate-100 bg-white' : 'border-gold/30 bg-gold/5'}`}>
+                          <div className="flex items-center justify-between mb-1">
+                            <p className="font-medium text-slate-900 text-sm">{msg.name} <span className="text-slate-400 font-normal">({msg.email})</span></p>
+                            {!msg.read && <span className="text-[10px] font-bold text-white bg-red-500 rounded-full px-2 py-0.5">Nouveau</span>}
+                          </div>
+                          <p className="text-sm font-medium text-slate-700">{msg.subject}</p>
+                          <p className="text-xs text-slate-500 line-clamp-1">{msg.message}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <p className="text-slate-500">Chargement des statistiques...</p>
+            )}
+          </div>
+        )}
 
         {/* NEWS TAB */}
         {activeTab === 'news' && (
@@ -1638,6 +1725,114 @@ const AdminDashboard = () => {
                 </>
               )}
             </div>
+          </div>
+        )}
+
+        {/* MESSAGES TAB */}
+        {activeTab === 'messages' && (
+          <div className="space-y-4" data-testid="messages-tab-content">
+            <div className="flex items-center justify-between">
+              <h3 className="font-serif text-xl text-slate-deep">Messages de contact</h3>
+              <span className="text-sm text-slate-500">{contactMessages.length} message(s)</span>
+            </div>
+            {loading ? (
+              <p>Chargement...</p>
+            ) : contactMessages.length === 0 ? (
+              <p className="text-slate-500">Aucun message reçu</p>
+            ) : (
+              <div className="space-y-3">
+                {contactMessages.map(msg => (
+                  <div key={msg.id} className={`bg-white rounded-lg p-5 border transition-colors ${msg.read ? 'border-slate-100' : 'border-gold/40 bg-gold/5'}`} data-testid={`message-item-${msg.id}`}>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <p className="font-medium text-slate-900">{msg.name}</p>
+                          {!msg.read && <span className="text-[10px] font-bold text-white bg-red-500 rounded-full px-2 py-0.5">Nouveau</span>}
+                        </div>
+                        <p className="text-sm text-gold mb-1">{msg.email}</p>
+                        <p className="text-sm font-semibold text-slate-800 mb-2">{msg.subject}</p>
+                        <p className="text-sm text-slate-600 whitespace-pre-wrap" style={{ wordBreak: 'break-word' }}>{msg.message}</p>
+                        <p className="text-xs text-slate-400 mt-3">{formatDate(msg.created_at)}</p>
+                      </div>
+                      <div className="flex space-x-2 flex-shrink-0">
+                        {!msg.read && (
+                          <button
+                            onClick={() => handleMarkMessageRead(msg.id)}
+                            className="text-slate-500 hover:text-emerald-600 transition-colors"
+                            title="Marquer comme lu"
+                            data-testid={`message-read-${msg.id}`}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDeleteMessage(msg.id)}
+                          className="text-slate-500 hover:text-red-600 transition-colors"
+                          title="Supprimer"
+                          data-testid={`message-delete-${msg.id}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* SUBSCRIBERS TAB */}
+        {activeTab === 'subscribers' && (
+          <div className="space-y-4" data-testid="subscribers-tab-content">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <h3 className="font-serif text-xl text-slate-deep">Abonnés newsletter</h3>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-500">{subscribers.length} abonné(s)</span>
+                {subscribers.length > 0 && (
+                  <button
+                    onClick={exportSubscribersCSV}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm rounded-lg font-medium transition-colors"
+                    data-testid="export-csv-button"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    Export CSV
+                  </button>
+                )}
+              </div>
+            </div>
+            {loading ? (
+              <p>Chargement...</p>
+            ) : subscribers.length === 0 ? (
+              <p className="text-slate-500">Aucun abonné</p>
+            ) : (
+              <>
+                <BulkBar selected={selectedSubscribers} setSelected={setSelectedSubscribers} items={subscribers} endpoint="subscribers" label="abonnés" />
+                {subscribers.map(sub => (
+                  <div key={sub.id} className={`bg-white rounded-lg p-4 border flex justify-between items-center ${selectedSubscribers.includes(sub.id) ? 'border-gold bg-gold/5' : 'border-slate-100'}`} data-testid={`subscriber-item-${sub.id}`}>
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <input
+                        type="checkbox"
+                        checked={selectedSubscribers.includes(sub.id)}
+                        onChange={() => toggleSelect(sub.id, selectedSubscribers, setSelectedSubscribers)}
+                        className="w-4 h-4 rounded border-slate-300 text-gold focus:ring-gold flex-shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <p className="font-medium text-slate-900 truncate">{sub.email}</p>
+                        <p className="text-xs text-slate-500">{formatDate(sub.subscribed_at)}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteSubscriber(sub.id)}
+                      className="text-slate-500 hover:text-red-600 transition-colors ml-4 flex-shrink-0"
+                      data-testid={`subscriber-delete-${sub.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
         )}
       </div>

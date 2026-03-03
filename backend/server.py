@@ -462,6 +462,58 @@ async def get_subscribers(username: str = Depends(get_current_user)):
     subs = await db.subscribers.find({}, {"_id": 0}).sort("subscribed_at", -1).to_list(500)
     return subs
 
+@api_router.delete("/subscribers/{subscriber_id}")
+async def delete_subscriber(subscriber_id: str, username: str = Depends(get_current_user)):
+    result = await db.subscribers.delete_one({"id": subscriber_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Subscriber not found")
+    return {"message": "Subscriber deleted"}
+
+@api_router.post("/subscribers/bulk-delete")
+async def bulk_delete_subscribers(req: BulkDeleteRequest, username: str = Depends(get_current_user)):
+    result = await db.subscribers.delete_many({"id": {"$in": req.ids}})
+    return {"deleted": result.deleted_count}
+
+# CONTACT MESSAGE MANAGEMENT
+@api_router.put("/contact/{message_id}/read")
+async def mark_message_read(message_id: str, username: str = Depends(get_current_user)):
+    result = await db.contact_messages.update_one({"id": message_id}, {"$set": {"read": True}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Message not found")
+    return {"message": "Marked as read"}
+
+@api_router.delete("/contact/{message_id}")
+async def delete_contact_message(message_id: str, username: str = Depends(get_current_user)):
+    result = await db.contact_messages.delete_one({"id": message_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Message not found")
+    return {"message": "Message deleted"}
+
+# DASHBOARD STATS
+@api_router.get("/stats")
+async def get_stats(username: str = Depends(get_current_user)):
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    news_count = await db.news.count_documents({})
+    events_total = await db.events.count_documents({})
+    events_upcoming = await db.events.count_documents({"date": {"$gte": today}})
+    mass_count = await db.mass_times.count_documents({})
+    funerals_count = await db.funerals.count_documents({})
+    letters_count = await db.letters.count_documents({})
+    subscribers_count = await db.subscribers.count_documents({})
+    messages_count = await db.contact_messages.count_documents({})
+    messages_unread = await db.contact_messages.count_documents({"read": {"$ne": True}})
+    return {
+        "news": news_count,
+        "events_total": events_total,
+        "events_upcoming": events_upcoming,
+        "mass_times": mass_count,
+        "funerals": funerals_count,
+        "letters": letters_count,
+        "subscribers": subscribers_count,
+        "messages": messages_count,
+        "messages_unread": messages_unread,
+    }
+
 # LETTERS (Lettre du Père Daniel)
 @api_router.get("/letters", response_model=List[Letter])
 async def get_letters():
