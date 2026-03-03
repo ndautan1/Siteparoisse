@@ -1,6 +1,6 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "CI=false yarn install && yarn build"
+buildCommand = "export CI=false && yarn install && yarn build"
 
 [deploy]
 startCommand = "npx serve -s build -l ${PORT:-3000}"
