@@ -11,6 +11,7 @@ import ReactQuill from 'react-quill-new';
 import { useDarkMode } from '@/contexts/DarkModeContext';
 import 'react-quill-new/dist/quill.snow.css';
 import { APP_VERSION } from '@/version';
+import { processRichText } from '@/lib/richText';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -112,8 +113,7 @@ const AdminDashboard = () => {
         [{ 'header': [1, 2, 3, false] }],
         ['bold', 'italic', 'underline'],
         [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        ['link-btn'],
-        ['clean']
+        ['clean', 'link-btn']
       ],
       handlers: {
         'link-btn': () => openLinkDialog(quillRef)
@@ -127,6 +127,46 @@ const AdminDashboard = () => {
   const quillModulesEvent = useMemo(() => makeQuillModules(quillEventRef), [makeQuillModules]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const quillModulesLetter = useMemo(() => makeQuillModules(quillLetterRef), [makeQuillModules]);
+
+  // Add tooltips to Quill toolbar buttons
+  useEffect(() => {
+    const tooltipMap = {
+      'ql-bold': 'Gras',
+      'ql-italic': 'Italique',
+      'ql-underline': 'Souligné',
+      'ql-clean': 'Effacer le formatage',
+      'ql-link-btn': 'Insérer un lien',
+      'ql-list': null, // handled separately by value
+    };
+    const listTooltips = { ordered: 'Liste numérotée', bullet: 'Liste à puces' };
+    const headerTooltip = 'Style de titre';
+
+    const addTooltips = () => {
+      document.querySelectorAll('.ql-toolbar').forEach(toolbar => {
+        if (toolbar.dataset.tooltipped) return;
+        toolbar.dataset.tooltipped = 'true';
+        toolbar.querySelectorAll('button, .ql-picker').forEach(btn => {
+          if (btn.title) return;
+          for (const [cls, tip] of Object.entries(tooltipMap)) {
+            if (btn.classList.contains(cls)) {
+              if (cls === 'ql-list') {
+                const val = btn.getAttribute('value');
+                btn.title = listTooltips[val] || 'Liste';
+              } else if (tip) {
+                btn.title = tip;
+              }
+              return;
+            }
+          }
+          if (btn.classList.contains('ql-picker') && btn.classList.contains('ql-header')) {
+            btn.title = headerTooltip;
+          }
+        });
+      });
+    };
+    const timer = setTimeout(addTooltips, 500);
+    return () => clearTimeout(timer);
+  }, [activeTab]);
 
   const NEWS_CATEGORIES = [
     'Actualité',
@@ -1098,21 +1138,49 @@ const AdminDashboard = () => {
 
             {/* News Preview Modal */}
             {previewNews && (
-              <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4" onClick={() => setPreviewNews(false)} data-testid="news-preview-modal">
-                <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
-                  <div className="relative">
-                    {newsForm.image_url && (
-                      <img loading="lazy" src={newsForm.image_url.startsWith('/api') ? `${BACKEND_URL}${newsForm.image_url}` : newsForm.image_url} alt="" className="w-full h-48 object-cover rounded-t-2xl" />
+              <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center sm:p-4 bg-black/40 backdrop-blur-sm" onClick={() => setPreviewNews(false)} data-testid="news-preview-modal">
+                <div className="bg-white dark:bg-slate-800 sm:rounded-2xl rounded-t-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] sm:max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+                  <div className="flex-shrink-0 sm:rounded-t-2xl rounded-t-2xl overflow-hidden relative">
+                    {newsForm.image_url ? (
+                      <div className="relative h-48 sm:h-56">
+                        <img loading="lazy" src={newsForm.image_url.startsWith('/api') ? `${BACKEND_URL}${newsForm.image_url}` : newsForm.image_url} alt="" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                          <span className="inline-block bg-gold/90 text-white text-xs font-semibold px-3 py-1 rounded-full mb-2">
+                            {newsForm.category === 'Autre' ? (customCategory || 'Autre') : newsForm.category}
+                          </span>
+                          <h2 className="font-serif text-xl sm:text-2xl text-white leading-tight">{newsForm.title || 'Sans titre'}</h2>
+                          <div className="flex items-center space-x-2 text-xs text-white/80 mt-2">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>{new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-4 sm:p-6 bg-gradient-to-r from-gold/20 to-gold/10">
+                        <span className="inline-block bg-gold/90 text-white text-xs font-semibold px-3 py-1 rounded-full mb-2">
+                          {newsForm.category === 'Autre' ? (customCategory || 'Autre') : newsForm.category}
+                        </span>
+                        <h2 className="font-serif text-xl sm:text-2xl text-slate-900 dark:text-slate-100 leading-tight">{newsForm.title || 'Sans titre'}</h2>
+                        <div className="flex items-center space-x-2 text-xs text-slate-500 mt-2">
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>{new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                        </div>
+                      </div>
                     )}
-                    <div className="absolute top-3 right-3">
-                      <button onClick={() => setPreviewNews(false)} className="bg-white/90 rounded-full p-1.5 hover:bg-white shadow"><X className="w-4 h-4" /></button>
-                    </div>
+                    <button onClick={() => setPreviewNews(false)} className="absolute top-3 right-3 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center transition-colors" aria-label="Fermer">
+                      <X className="w-5 h-5 text-white" />
+                    </button>
                   </div>
-                  <div className="p-6">
-                    <span className="text-xs font-semibold text-gold uppercase tracking-wider">{newsForm.category === 'Autre' ? (customCategory || 'Autre') : newsForm.category}</span>
-                    <h2 className="font-serif text-2xl text-slate-900 dark:text-slate-100 mt-2 mb-4">{newsForm.title || 'Sans titre'}</h2>
-                    <div className="prose prose-sm max-w-none text-slate-600 dark:text-slate-400 dark:text-slate-400" dangerouslySetInnerHTML={{ __html: newsForm.content || '<p class="text-slate-400 italic">Aucun contenu</p>' }}></div>
-                    <p className="text-xs text-slate-400 mt-6 pt-4 border-t border-slate-100">{new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
+                    <div className="text-slate-600 dark:text-slate-400 leading-relaxed prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: processRichText(newsForm.content) || '<p class="text-slate-400 italic">Aucun contenu</p>' }}
+                    />
+                  </div>
+                  <div className="flex-shrink-0 sm:rounded-b-2xl bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-700 p-3 sm:p-4 flex justify-end">
+                    <button onClick={() => setPreviewNews(false)} className="px-6 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-600 dark:hover:bg-slate-500 text-slate-700 dark:text-slate-300 rounded-full font-medium transition-colors" data-testid="news-preview-close">
+                      Fermer
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1734,7 +1802,7 @@ const AdminDashboard = () => {
                       <div className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-gold" />{eventForm.time || '—'}{eventForm.end_time ? ` - ${eventForm.end_time}` : ''}</div>
                     </div>
                     {eventForm.location && <p className="text-sm text-slate-600 dark:text-slate-400 dark:text-slate-400"><span className="font-medium">Lieu :</span> {eventForm.location}</p>}
-                    {eventForm.description && <div className="prose prose-sm max-w-none text-slate-600 dark:text-slate-400 dark:text-slate-400" dangerouslySetInnerHTML={{ __html: eventForm.description }}></div>}
+                    {eventForm.description && <div className="prose prose-sm max-w-none text-slate-600 dark:text-slate-400 leading-relaxed" dangerouslySetInnerHTML={{ __html: processRichText(eventForm.description) }}></div>}
                     {!eventForm.description && <p className="text-slate-400 italic text-sm">Aucune description</p>}
                   </div>
                 </div>
