@@ -106,7 +106,8 @@ const ActualitesPage = () => {
                   <div className="sm:w-48 md:w-56 flex-shrink-0">
                     {(item.image_url || DEFAULT_CATEGORY_IMAGES[item.category]) ? (
                       <img
-loading="lazy"                         src={item.image_url || DEFAULT_CATEGORY_IMAGES[item.category]}
+                loading="lazy"
+                src={item.image_url || DEFAULT_CATEGORY_IMAGES[item.category]}
                         alt={item.title}
                         className="w-full h-40 sm:h-full object-cover"
                       />

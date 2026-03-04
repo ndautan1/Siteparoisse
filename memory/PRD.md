@@ -1,80 +1,48 @@
-# Notre Dame d'Autan - Parish Website PRD
+# PRD - Paroisse Notre Dame d'Autan
 
-## Original Problem Statement
-Full-stack parish website for "Notre Dame d'Autan" (Castanet-Tolosan, Saint-Orens area). Features public site with news, agenda, mass schedules, and a private CMS for content management.
+## Problème original
+Site web paroissial pour Notre Dame d'Autan (Castanet-Tolosan, Saint-Orens et environs). Application full-stack React + FastAPI + MongoDB.
 
-## Tech Stack
-- **Frontend**: React, Tailwind CSS, Shadcn/UI, React-Quill, Leaflet.js
-- **Backend**: FastAPI, MongoDB (Motor async driver)
-- **Auth**: JWT-based admin authentication
+## Architecture
+- **Frontend**: React 19, Tailwind CSS, Craco, react-router-dom v7
+- **Backend**: FastAPI, MongoDB
+- **Déploiement**: Railway avec Nixpacks
+- **État**: React Context (DarkMode)
 
-## Core Requirements
-1. Public website: Homepage, News, Agenda, Mass schedules, Parish info, Bell towers map
-2. CMS Admin: CRUD for News, Events, Mass Times, Funerals, Letters
-3. Location management with Google Maps links
-4. Interactive bell towers map (Leaflet/OpenStreetMap)
-5. Versioning system displayed in footer and CMS
+## Ce qui a été implémenté
 
-## What's Been Implemented
+### Session précédente
+- Fix déploiement Railway (ESLint CI=false)
+- Refonte complète du CMS (AdminDashboard)
+- Mode sombre site-wide (DarkModeContext + Tailwind class strategy)
+- Bouton mode sombre en position flottante
 
-### Public Site
-- Homepage with hero, news section, upcoming events, welcome message
-- Agenda page with event cards and detail modals
-- Mass schedules page
-- Bell towers page with detail pages
-- Footer with interactive map, quick links, clickable addresses
-- Multiple pillar/content pages (Notre Dame d'Autan, Familles, Vie Spirituelle, etc.)
-- Contact form, Newsletter subscription
-- Floating action buttons, SEO component
+### Session actuelle (Fév 2026)
+- **Bouton mode sombre en rose poudré** : FloatingButtons.js et DarkModeToggle.js utilisent maintenant `bg-gold` (#d0ada6) pour correspondre aux autres boutons
+- **Lazy loading images** : `loading="lazy"` ajouté à toutes les images du site (sauf Hero qui utilise `fetchPriority="high"`)
+- **Code splitting** : React.lazy + Suspense pour 22 composants de pages (seul HomePage est chargé eagerly)
+- **Composant LazyImage** : Composant réutilisable avec IntersectionObserver
 
-### CMS Admin (AdminDashboard)
-- **Dashboard tab** (default) - Statistics overview with 8 clickable cards showing: news, upcoming events, mass times, funerals, letters, subscribers, messages, unread messages. Recent messages preview.
-- **News tab** - Full CRUD with rich text editor, image upload, default category images, bulk delete
-- **Mass Times tab** - CRUD with date picker, repeat/recurring functionality, duplicate, bulk operations
-- **Funerals tab** - Full CRUD with location autocomplete
-- **Events tab** - Full CRUD with rich text description, time range, category
-- **Letters tab** - Full CRUD with PDF upload
-- **Messages tab** - View contact messages, mark as read, delete. Unread badge on tab.
-- **Subscribers tab** - View newsletter subscribers, CSV export, individual/bulk delete
+## Backlog priorisé
 
-### Bug Fixes Applied
-- Word-breaking issues from React-Quill (&nbsp;) → replaced with regular spaces
-- CMS card text overflow hiding edit/delete buttons
-- News edit form not pre-filling title and category
-- Modal z-index conflicts with header (React Portals solution)
+### P0 - Amélioration UX page d'accueil
+Réorganiser le contenu, section "Événements à venir" dédiée, améliorer les CTA
 
-## Pending / Future Tasks
+### P1 - Calendrier interactif
+Remplacer la liste statique d'événements par un calendrier dynamique et filtrable
 
-### P0 (Ready when user provides keys)
-- **SendGrid email integration** - Forward contact form messages to ndautan6@proton.me
-  - Needs: SendGrid API key + verified sender email
-  - Destination: ndautan6@proton.me
+### P2 - Lecteur de direct (streaming)
+Intégrer un lecteur vidéo pour les messes/événements en direct
 
-### P1 (User mentioned, deferred)
-- **Google Analytics (GA4)** - Track site visits and engagement
-  - Needs: GA4 Measurement ID (G-XXXXXXXXXX)
+### P3 - Optimisation performances (FAIT)
+- ✅ Lazy loading images
+- ✅ Code splitting React.lazy
+- Reste : optimisation images côté serveur (compression, WebP)
 
-### P2 (Suggested improvements)
-- ~~Search/filter in CMS lists~~ ✅ Implemented (search bar in all tabs)
-- ~~Responsive tabs for mobile~~ ✅ Implemented (horizontal scroll, hidden scrollbar)
-- ~~Content preview before publishing~~ ✅ Implemented (preview modals for news & events)
-- ~~Status indicators~~ ✅ Implemented (Publié/Brouillon for news, À venir/Passé for events)
-- Extract modal logic into reusable EventModal component
-- Centralize stripHtml utility function
-
-## Key Credentials
-- Admin login: test/test (test environment)
-- Admin DB username: admin (original), test (created for testing)
-
-## API Endpoints
-- Auth: POST /api/auth/login
-- News: GET/POST /api/news, PUT/DELETE /api/news/{id}, POST /api/news/bulk-delete
-- Mass Times: GET/POST /api/mass-times, PUT/DELETE /api/mass-times/{id}, POST /api/mass-times/bulk, POST /api/mass-times/bulk-delete
-- Funerals: GET/POST /api/funerals, PUT/DELETE /api/funerals/{id}, POST /api/funerals/bulk-delete
-- Events: GET/POST /api/events, PUT/DELETE /api/events/{id}, POST /api/events/bulk-delete
-- Letters: GET/POST /api/letters, PUT/DELETE /api/letters/{id}, POST /api/letters/bulk-delete
-- Contact: POST /api/contact (public), GET /api/contact (admin), PUT /api/contact/{id}/read, DELETE /api/contact/{id}
-- Subscribers: POST /api/subscribers (public), GET /api/subscribers (admin), DELETE /api/subscribers/{id}, POST /api/subscribers/bulk-delete
-- Stats: GET /api/stats (admin)
-- Upload: POST /api/upload
-- Health: GET /api/health
+## Fichiers clés
+- `frontend/src/App.js` - Routing + code splitting
+- `frontend/src/components/FloatingButtons.js` - Boutons flottants
+- `frontend/src/components/DarkModeToggle.js` - Toggle mode sombre
+- `frontend/src/components/LazyImage.js` - Composant image lazy
+- `frontend/src/contexts/DarkModeContext.js` - Context mode sombre
+- `frontend/tailwind.config.js` - Config Tailwind (gold = #d0ada6)

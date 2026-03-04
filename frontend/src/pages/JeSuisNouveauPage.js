@@ -56,7 +56,8 @@ const JeSuisNouveauPage = () => {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
-loading="lazy"             src="https://customer-assets.emergentagent.com/job_5166d458-aa97-495f-97c0-2fdcfaf2d885/artifacts/4pgv62xu_Nouveau.png"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_5166d458-aa97-495f-97c0-2fdcfaf2d885/artifacts/4pgv62xu_Nouveau.png"
             alt="Bienvenue aux nouveaux arrivants de la paroisse Notre Dame d'Autan"
             className="w-full h-full object-cover"
           />
@@ -181,7 +182,8 @@ loading="lazy"             src="https://customer-assets.emergentagent.com/job_51
             {/* Photo gauche */}
             <div className="md:w-64 lg:w-72 flex-shrink-0 relative">
               <img
-loading="lazy"                 src="https://customer-assets.emergentagent.com/job_church-community-16/artifacts/qxrgws2a_Bienvenue.png"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_church-community-16/artifacts/qxrgws2a_Bienvenue.png"
                 alt="Bienvenue dans notre paroisse"
                 className="w-full h-56 md:h-full object-cover object-center"
               />
@@ -227,7 +229,8 @@ loading="lazy"                 src="https://customer-assets.emergentagent.com/jo
               <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#d0ada6]/30">
                   <img
-loading="lazy"                     src="https://customer-assets.emergentagent.com/job_513c9844-285f-4857-a7dc-ddd6dae9e1cf/artifacts/izar22oi_pere-daniel.webp"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_513c9844-285f-4857-a7dc-ddd6dae9e1cf/artifacts/izar22oi_pere-daniel.webp"
                     alt="Père Daniel"
                     className="w-full h-full object-cover"
                   />

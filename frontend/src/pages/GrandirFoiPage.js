@@ -52,7 +52,8 @@ const GrandirFoiPage = () => {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
-loading="lazy"             src="https://customer-assets.emergentagent.com/job_scroll-donate-pages/artifacts/b4t8pij3_Grandir-foi.png"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_scroll-donate-pages/artifacts/b4t8pij3_Grandir-foi.png"
             alt="Section Grandir dans la Foi de la paroisse Notre Dame d'Autan"
             className="w-full h-full object-cover"
           />

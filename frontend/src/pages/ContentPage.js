@@ -818,7 +818,8 @@ const ContentPage = ({ section }) => {
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
             <img
-loading="lazy"               src={config.heroImage}
+                loading="lazy"
+                src={config.heroImage}
               alt={config.title}
               className={`w-full h-full object-cover ${config.heroPosition || 'object-center'}`}
             />

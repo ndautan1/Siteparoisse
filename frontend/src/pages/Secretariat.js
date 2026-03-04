@@ -46,7 +46,8 @@ const Secretariat = () => {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
-loading="lazy"             src="https://customer-assets.emergentagent.com/job_scroll-donate-pages/artifacts/03c30vdd_Secretariat.png"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_scroll-donate-pages/artifacts/03c30vdd_Secretariat.png"
             alt="Secr\u00e9tariat de la paroisse Notre Dame d'Autan"
             className="w-full h-full object-cover object-center"
           />

@@ -105,7 +105,8 @@ const VieSpirituelePage = () => {
                   {/* Image */}
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <img
-loading="lazy"                       src={section.image}
+                loading="lazy"
+                src={section.image}
                       alt={section.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       style={section.imageStyle || {}}

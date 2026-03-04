@@ -13,7 +13,8 @@ const VieEconomiquePage = () => {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
-loading="lazy"             src="https://customer-assets.emergentagent.com/job_parish-site-1/artifacts/wkjxpnzz_Vie-economique.png"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_parish-site-1/artifacts/wkjxpnzz_Vie-economique.png"
             alt="Vie \u00e9conomique de la paroisse Notre Dame d'Autan"
             className="w-full h-full object-cover"
           />

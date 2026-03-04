@@ -28,7 +28,7 @@ const HomePage = () => {
             {/* Photo gauche */}
             <div className="md:w-64 lg:w-72 flex-shrink-0 relative">
               <img
-loading="lazy"                 src={BIENVENUE_IMG}
+                src={BIENVENUE_IMG}
                 alt="Photo de bienvenue de la paroisse Notre Dame d'Autan"
                 loading="lazy"
                 className="w-full h-56 md:h-full object-cover object-center"
@@ -75,7 +75,7 @@ loading="lazy"                 src={BIENVENUE_IMG}
               <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#d0ada6]/30">
                   <img
-loading="lazy"                     src={CURE_IMG}
+                    src={CURE_IMG}
                     alt="P\u00e8re Daniel Brouard-Derval, cur\u00e9 de Notre Dame d'Autan"
                     loading="lazy"
                     className="w-full h-full object-cover"

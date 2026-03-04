@@ -285,7 +285,8 @@ const EquipePastoralePage = () => {
       <section className="relative h-[40vh] sm:h-[55vh] flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           <img
-loading="lazy"             src="https://customer-assets.emergentagent.com/job_scroll-donate-pages/artifacts/x8y0e2d8_Equipe-pastorale.png"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_scroll-donate-pages/artifacts/x8y0e2d8_Equipe-pastorale.png"
             alt="\u00c9quipe pastorale de la paroisse Notre Dame d'Autan"
             className="w-full h-full object-cover object-[center_30%]"
           />
@@ -382,7 +383,8 @@ loading="lazy"             src="https://customer-assets.emergentagent.com/job_sc
                     <div className="aspect-square overflow-hidden relative">
                       {eapCarouselMembers.map((m, idx) => (
                         <img
-loading="lazy"                           key={idx}
+                loading="lazy"
+                key={idx}
                           src={m.image}
                           alt={m.name}
                           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 group-hover:scale-105 ${
@@ -471,7 +473,8 @@ loading="lazy"                           key={idx}
             {/* Photo gauche */}
             <div className="md:w-64 lg:w-72 flex-shrink-0 relative">
               <img
-loading="lazy"                 src="https://customer-assets.emergentagent.com/job_church-community-16/artifacts/qxrgws2a_Bienvenue.png"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_church-community-16/artifacts/qxrgws2a_Bienvenue.png"
                 alt="Bienvenue dans notre paroisse"
                 className="w-full h-56 md:h-full object-cover object-center"
               />
@@ -517,7 +520,8 @@ loading="lazy"                 src="https://customer-assets.emergentagent.com/jo
               <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#d0ada6]/30">
                   <img
-loading="lazy"                     src="https://customer-assets.emergentagent.com/job_513c9844-285f-4857-a7dc-ddd6dae9e1cf/artifacts/izar22oi_pere-daniel.webp"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_513c9844-285f-4857-a7dc-ddd6dae9e1cf/artifacts/izar22oi_pere-daniel.webp"
                     alt="Père Daniel"
                     className="w-full h-full object-cover"
                   />
@@ -765,7 +769,8 @@ loading="lazy"                     src="https://customer-assets.emergentagent.co
                   <div key={idx} className="flex gap-5 p-4 bg-slate-50 rounded-xl items-center">
                     <div className="w-32 h-32 flex-shrink-0">
                       <img
-loading="lazy"                         src={member.image}
+                loading="lazy"
+                src={member.image}
                         alt={member.name}
                         className="w-full h-full object-cover rounded-full border-4 border-[#93B5B7]/20"
                       />
@@ -789,7 +794,8 @@ loading="lazy"                         src={member.image}
                     <div className="w-32 h-32 flex-shrink-0">
                       {member.image ? (
                         <img
-loading="lazy"                           src={member.image}
+                loading="lazy"
+                src={member.image}
                           alt={member.name}
                           className="w-full h-full object-cover rounded-full border-4 border-[#d0ada6]/20"
                         />

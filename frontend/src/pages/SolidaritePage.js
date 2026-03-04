@@ -67,7 +67,8 @@ const SolidaritePage = () => {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
-loading="lazy"             src="https://customer-assets.emergentagent.com/job_scroll-donate-pages/artifacts/rz1a62v8_Solidarite.png"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_scroll-donate-pages/artifacts/rz1a62v8_Solidarite.png"
             alt="Section Solidarit\u00e9 et \u00c9coute de la paroisse Notre Dame d'Autan"
             className="w-full h-full object-cover"
           />

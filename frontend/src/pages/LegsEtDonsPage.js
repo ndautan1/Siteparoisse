@@ -29,7 +29,8 @@ const LegsEtDonsPage = () => {
       <section className="relative h-[40vh] md:h-[45vh] flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           <img
-loading="lazy"             src="https://customer-assets.emergentagent.com/job_parish-site-1/artifacts/wkjxpnzz_Vie-economique.png"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_parish-site-1/artifacts/wkjxpnzz_Vie-economique.png"
             alt="Soutenir la paroisse Notre Dame d'Autan"
             className="w-full h-full object-cover"
           />

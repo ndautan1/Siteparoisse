@@ -83,7 +83,8 @@ const ClocherDetailPage = () => {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
-loading="lazy"             src={clocher.image}
+                loading="lazy"
+                src={clocher.image}
             alt={clocher.churchName}
             className="w-full h-full object-cover"
           />

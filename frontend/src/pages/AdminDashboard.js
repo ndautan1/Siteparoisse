@@ -646,7 +646,8 @@ const AdminDashboard = () => {
         <div className="p-5 border-b border-slate-100 dark:border-slate-700">
           <div className="flex items-center gap-3">
             <img
-loading="lazy"               src="https://customer-assets.emergentagent.com/job_c3efae68-56d0-4924-8ecf-4f7502ce3630/artifacts/34n0n91l_Notre-Dame-d-Autan.png"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_c3efae68-56d0-4924-8ecf-4f7502ce3630/artifacts/34n0n91l_Notre-Dame-d-Autan.png"
               alt="Notre Dame d'Autan"
               className="h-9 w-auto"
             />

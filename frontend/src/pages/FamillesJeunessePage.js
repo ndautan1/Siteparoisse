@@ -62,7 +62,8 @@ const FamillesJeunessePage = () => {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
-loading="lazy"             src="https://customer-assets.emergentagent.com/job_scroll-donate-pages/artifacts/mjvy6496_Familles-jeunesse.png"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_scroll-donate-pages/artifacts/mjvy6496_Familles-jeunesse.png"
             alt="Section Familles et Jeunesse de la paroisse Notre Dame d'Autan"
             className="w-full h-full object-cover"
           />

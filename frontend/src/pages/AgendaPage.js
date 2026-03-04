@@ -78,7 +78,8 @@ const AgendaPage = () => {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
-loading="lazy"             src="https://customer-assets.emergentagent.com/job_parish-site-2/artifacts/t9ksvh2k_Agenda.png"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_parish-site-2/artifacts/t9ksvh2k_Agenda.png"
             alt="Agenda paroissial Notre Dame d'Autan"
             className="w-full h-full object-cover"
           />

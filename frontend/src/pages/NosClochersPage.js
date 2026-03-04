@@ -15,7 +15,8 @@ const NosClochersPage = () => {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
-loading="lazy"             src="https://customer-assets.emergentagent.com/job_c3efae68-56d0-4924-8ecf-4f7502ce3630/artifacts/54f2vm3r_Eglise-Castanet-Tolosan.jpg"
+                loading="lazy"
+                src="https://customer-assets.emergentagent.com/job_c3efae68-56d0-4924-8ecf-4f7502ce3630/artifacts/54f2vm3r_Eglise-Castanet-Tolosan.jpg"
             alt="Les 16 clochers de la paroisse Notre Dame d'Autan"
             className="w-full h-full object-cover"
           />
@@ -56,7 +57,8 @@ loading="lazy"             src="https://customer-assets.emergentagent.com/job_c3
                 {/* Image */}
                 <div className="relative aspect-[3/2] overflow-hidden">
                   <img
-loading="lazy"                     src={clocher.image}
+                loading="lazy"
+                src={clocher.image}
                     alt={clocher.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
