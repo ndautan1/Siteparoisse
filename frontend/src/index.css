@@ -217,6 +217,20 @@ div[style*="position: fixed"][style*="bottom"],
 
 
 /* ============ Prose styles for rendered rich text ============ */
+
+/* ============ Leaflet map z-index containment ============ */
+.leaflet-map-container {
+    isolation: isolate;
+}
+.leaflet-map-container .leaflet-pane,
+.leaflet-map-container .leaflet-control {
+    z-index: auto !important;
+}
+.leaflet-map-container .leaflet-top,
+.leaflet-map-container .leaflet-bottom {
+    z-index: 1 !important;
+}
+
 .prose { overflow-wrap: break-word; }
 .prose h1 { font-size: 1.5em; font-weight: 700; margin: 0.5em 0; }
 .prose h2 { font-size: 1.25em; font-weight: 600; margin: 0.5em 0; }

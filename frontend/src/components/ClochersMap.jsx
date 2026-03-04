@@ -27,6 +27,7 @@ const ClochersMap = ({ clochers, height = "500px" }) => {
   const centerLng = coordinates.reduce((sum, c) => sum + c.lng, 0) / coordinates.length;
 
   return (
+    <div className="leaflet-map-container" style={{ position: 'relative', zIndex: 0 }}>
     <MapContainer
       center={[centerLat, centerLng]}
       zoom={11}
@@ -65,6 +66,7 @@ const ClochersMap = ({ clochers, height = "500px" }) => {
         </Marker>
       ))}
     </MapContainer>
+    </div>
   );
 };
 

@@ -22,6 +22,7 @@ Site web paroissial pour Notre Dame d'Autan (Castanet-Tolosan, Saint-Orens et en
 - **Lazy loading images** : `loading="lazy"` ajouté à toutes les images du site (sauf Hero qui utilise `fetchPriority="high"`)
 - **Code splitting** : React.lazy + Suspense pour 22 composants de pages (seul HomePage est chargé eagerly)
 - **Composant LazyImage** : Composant réutilisable avec IntersectionObserver
+- **Fix z-index carte Leaflet** : La carte des clochers (page + footer) ne passe plus au-dessus du header, des dropdowns et des modales (`isolation: isolate` + wrapper z-index)
 
 ## Backlog priorisé
 
